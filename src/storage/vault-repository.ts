@@ -85,14 +85,17 @@ export interface VaultRepository {
   readSyncConnection(): Promise<StoredSyncConnection | undefined>
   writeSyncConnection(connection: StoredSyncConnection): Promise<void>
   clearSyncConnection(): Promise<void>
+  readAutoLockDuration(): Promise<unknown>
+  writeAutoLockDuration(duration: number | 'none'): Promise<void>
 }
 
 export const createVaultRepository = (name = 'kagito-vault-v1'): VaultRepository => {
-  const database = openDB(name, 2, {
+  const database = openDB(name, 3, {
     upgrade(db) {
       if (!db.objectStoreNames.contains('vault-header')) db.createObjectStore('vault-header')
       if (!db.objectStoreNames.contains('vault-envelopes')) db.createObjectStore('vault-envelopes', { keyPath: 'objectId' })
       if (!db.objectStoreNames.contains('sync-connection')) db.createObjectStore('sync-connection')
+      if (!db.objectStoreNames.contains('auto-lock-settings')) db.createObjectStore('auto-lock-settings')
     },
   })
 
@@ -138,6 +141,12 @@ export const createVaultRepository = (name = 'kagito-vault-v1'): VaultRepository
     },
     async clearSyncConnection() {
       await database.then((db) => db.delete('sync-connection', 'connection'))
+    },
+    async readAutoLockDuration() {
+      return database.then((db) => db.get('auto-lock-settings', 'duration'))
+    },
+    async writeAutoLockDuration(duration) {
+      await database.then((db) => db.put('auto-lock-settings', duration, 'duration'))
     },
   }
 }
