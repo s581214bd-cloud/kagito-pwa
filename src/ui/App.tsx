@@ -3,6 +3,7 @@ import { VaultService } from '../application/vault-service'
 import { PairingClient, type PendingPairing } from '../application/pairing-client'
 import { SyncClient, type SyncConnection } from '../application/sync-client'
 import { SyncSettings } from '../application/sync-settings'
+import { AutoLockSettings, type AutoLockDuration } from '../application/auto-lock-settings'
 import type { Category, Registration } from '../domain/models'
 import { createVaultRepository } from '../storage/vault-repository'
 import { RegistrationScreen } from './screens/RegistrationScreen'
@@ -16,6 +17,7 @@ type Screen = 'locked' | 'vault' | 'registration' | 'settings' | 'categories' | 
 export default function App() {
   const repository = useRef(createVaultRepository())
   const syncSettings = useRef(new SyncSettings(repository.current))
+  const autoLockSettings = useRef(new AutoLockSettings(repository.current))
   const [screen, setScreen] = useState<Screen>('locked')
   const [service, setService] = useState<VaultService | null>(null)
   const [registrations, setRegistrations] = useState<Registration[]>([])
@@ -30,6 +32,7 @@ export default function App() {
   const [error, setError] = useState('')
   const [connection, setConnection] = useState<SyncConnection | undefined>()
   const [pendingPairing, setPendingPairing] = useState<PendingPairing | undefined>()
+  const [autoLockDuration, setAutoLockDuration] = useState<AutoLockDuration>(300_000)
   const pairingLinkFromPage = (() => {
     const link = new URL(window.location.href)
     const code = link.searchParams.get('pair')
@@ -57,9 +60,10 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    void Promise.all([repository.current.readHeader(), syncSettings.current.read()]).then(([header, savedConnection]) => {
+    void Promise.all([repository.current.readHeader(), syncSettings.current.read(), autoLockSettings.current.read()]).then(([header, savedConnection, savedAutoLockDuration]) => {
       setHasVault(header !== undefined)
       setConnection(savedConnection)
+      setAutoLockDuration(savedAutoLockDuration)
       setVaultReady(true)
       if (pairingLinkFromPage !== undefined) setScreen('sync')
     })
@@ -67,10 +71,10 @@ export default function App() {
 
   useLayoutEffect(() => {
     if (service === null) return
-    let timeout = window.setTimeout(lock, 300_000)
+    let timeout = autoLockDuration === 'none' ? undefined : window.setTimeout(lock, autoLockDuration)
     const resetTimer = () => {
-      window.clearTimeout(timeout)
-      timeout = window.setTimeout(lock, 300_000)
+      if (timeout !== undefined) window.clearTimeout(timeout)
+      timeout = autoLockDuration === 'none' ? undefined : window.setTimeout(lock, autoLockDuration)
     }
     const onVisibilityChange = () => {
       if (document.visibilityState === 'hidden') lock()
@@ -79,12 +83,12 @@ export default function App() {
     window.addEventListener('keydown', resetTimer)
     document.addEventListener('visibilitychange', onVisibilityChange)
     return () => {
-      window.clearTimeout(timeout)
+      if (timeout !== undefined) window.clearTimeout(timeout)
       window.removeEventListener('pointerdown', resetTimer)
       window.removeEventListener('keydown', resetTimer)
       document.removeEventListener('visibilitychange', onVisibilityChange)
     }
-  }, [lock, service])
+  }, [autoLockDuration, lock, service])
 
   const openPasswordForm = () => {
     setError('')
@@ -212,6 +216,11 @@ export default function App() {
           void VaultService.importEncrypted(file, repository.current).then(lock).catch(() => setError('バックアップ形式が正しくありません'))
         }}
         error={error}
+        autoLockDuration={autoLockDuration}
+        onAutoLockDurationChange={(duration) => {
+          setAutoLockDuration(duration)
+          void autoLockSettings.current.save(duration)
+        }}
       />
     )
   }

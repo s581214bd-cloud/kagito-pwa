@@ -50,12 +50,36 @@ it('creates a vault when the confirmation matches an eight-character master pass
   const user = userEvent.setup()
   render(<App />)
 
-  await user.click(await screen.findByRole('button', { name: '保管庫を作成' }))
+  const vaultButton = await screen.findByRole('button', { name: /保管庫を(作成|解除)/ })
+  await user.click(vaultButton)
   await user.type(screen.getByLabelText('マスターパスワード'), 'eight888')
-  await user.type(screen.getByLabelText('マスターパスワード（確認）'), 'eight888')
-  await user.click(screen.getByRole('button', { name: '作成する' }))
+  if (vaultButton.textContent === '保管庫を作成') {
+    await user.type(screen.getByLabelText('マスターパスワード（確認）'), 'eight888')
+    await user.click(screen.getByRole('button', { name: '作成する' }))
+  } else {
+    await user.click(screen.getByRole('button', { name: '解除' }))
+  }
 
   expect(await screen.findByRole('button', { name: '登録を追加' })).toBeVisible()
+})
+
+it('saves the selected auto-lock duration', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  const vaultButton = await screen.findByRole('button', { name: /保管庫を(作成|解除)/ })
+  await user.click(vaultButton)
+  await user.type(screen.getByLabelText('マスターパスワード'), 'eight888')
+  if (vaultButton.textContent === '保管庫を作成') {
+    await user.type(screen.getByLabelText('マスターパスワード（確認）'), 'eight888')
+    await user.click(screen.getByRole('button', { name: '作成する' }))
+  } else {
+    await user.click(screen.getByRole('button', { name: '解除' }))
+  }
+  await user.click(await screen.findByRole('button', { name: '設定とヘルプ' }))
+
+  await user.selectOptions(screen.getByLabelText('自動ロック時間'), '60000')
+  expect(screen.getByLabelText('自動ロック時間')).toHaveValue('60000')
 })
 
 it('offers a newly added category when adding a registration', async () => {

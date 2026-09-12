@@ -6,7 +6,11 @@ const defaultDuration: AutoLockDuration = 300_000
 const allowedDurations: readonly AutoLockDuration[] = [30_000, 60_000, 300_000, 'none']
 
 export class AutoLockSettings {
-  constructor(private readonly repository: VaultRepository) {}
+  private readonly repository: VaultRepository
+
+  constructor(repository: VaultRepository) {
+    this.repository = repository
+  }
 
   async read(): Promise<AutoLockDuration> {
     const value = await this.repository.readAutoLockDuration()
