@@ -56,6 +56,24 @@ it('places favorite registrations first', () => {
   expect(screen.getAllByRole('listitem')[0]).toHaveTextContent('Amazon')
 })
 
+it('requests a favorite change from the registration card', async () => {
+  const user = userEvent.setup()
+  const onToggleFavorite = vi.fn()
+
+  render(
+    <VaultListScreen
+      registrations={[registration('r0', '楽天市場')]}
+      categories={categories}
+      onOpenRegistration={vi.fn()}
+      onToggleFavorite={onToggleFavorite}
+    />,
+  )
+
+  await user.click(screen.getByRole('button', { name: '楽天市場をお気に入りに追加' }))
+
+  expect(onToggleFavorite).toHaveBeenCalledWith('r0', true)
+})
+
 it('shows only favorite registrations when the favorites filter is enabled', async () => {
   const user = userEvent.setup()
   const favorites = [registration('r0', '楽天市場'), { ...registration('r1', 'Amazon'), favorite: true }]

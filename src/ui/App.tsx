@@ -278,6 +278,12 @@ export default function App() {
           setSelectedRegistration(undefined)
           setScreen('registration')
         }}
+        onToggleFavorite={async (id, favorite) => {
+          const registration = registrations.find((candidate) => candidate.id === id)
+          if (registration === undefined) return
+          await service.updateRegistration(id, { ...registration, favorite })
+          await refreshRegistrations(service)
+        }}
         onMoveRegistration={async (id, targetIndex) => {
           await service.moveRegistration(id, targetIndex)
           await refreshRegistrations(service)

@@ -6,6 +6,7 @@ type Props = {
   registrations: Registration[]
   categories: Category[]
   onOpenRegistration: (id: string) => void
+  onToggleFavorite?: (id: string, favorite: boolean) => void
   onMoveRegistration?: (id: string, targetIndex: number) => void
   onAddRegistration?: () => void
 }
@@ -18,7 +19,7 @@ const sortRegistrations = (registrations: Registration[], sort: SortMode) => reg
   return left.sortOrder - right.sortOrder
 })
 
-export function VaultListScreen({ registrations, categories, onOpenRegistration, onMoveRegistration, onAddRegistration }: Props) {
+export function VaultListScreen({ registrations, categories, onOpenRegistration, onToggleFavorite, onMoveRegistration, onAddRegistration }: Props) {
   const [query, setQuery] = useState('')
   const [categoryId, setCategoryId] = useState<string | null>(null)
   const [sort, setSort] = useState<SortMode>('manual')
@@ -105,6 +106,15 @@ export function VaultListScreen({ registrations, categories, onOpenRegistration,
               onClick={() => onOpenRegistration(registration.id)}
             >
               {registration.favorite ? '★ ' : ''}{registration.title}
+            </button>
+            <button
+              type="button"
+              className="favorite-toggle"
+              aria-pressed={registration.favorite}
+              aria-label={`${registration.title}をお気に入り${registration.favorite ? 'から削除' : 'に追加'}`}
+              onClick={() => onToggleFavorite?.(registration.id, !registration.favorite)}
+            >
+              {registration.favorite ? '★' : '☆'}
             </button>
             <span className="registration-category" title={categoryNames.get(registration.categoryId) ?? '未分類'}>
               {categoryNames.get(registration.categoryId) ?? '未分類'}

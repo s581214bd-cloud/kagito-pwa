@@ -34,6 +34,8 @@ li > button:not([draggable]) { flex: 1; text-align: left; color: #f4f7fb; backgr
 li > button[draggable] { padding: 6px 9px; color: #9db5d2; background: transparent; }
 li span { color: #9db5d2; font-size: 13px; }
 .registration-title, .registration-category { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+li > button.favorite-toggle { flex: 0 0 auto; padding: 4px 6px; color: #9db5d2; background: transparent; font-size: 20px; line-height: 1; }
+.favorite-toggle[aria-pressed="true"] { color: #e3b85d; }
 .registration-category { max-width: 8rem; }
 output { display: none; }
 section { display: grid; gap: 9px; padding: 14px; border-radius: 14px; background: rgba(23, 52, 83, .5); }
