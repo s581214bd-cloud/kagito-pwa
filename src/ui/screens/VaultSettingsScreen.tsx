@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { helpTopics } from '../../application/help-topics'
 
 type Props = {
@@ -11,6 +12,8 @@ type Props = {
 }
 
 export function VaultSettingsScreen({ onBack, onLock, onBackup, onCategories, onSync, onImport, error }: Props) {
+  const [pendingBackup, setPendingBackup] = useState<File>()
+
   return (
     <main className="settings-screen" aria-label="設定とヘルプ">
       <header className="settings-header">
@@ -40,9 +43,19 @@ export function VaultSettingsScreen({ onBack, onLock, onBackup, onCategories, on
           <span>バックアップを復元</span>
           <input aria-label="暗号化バックアップを復元" type="file" accept="application/json,.json,.kagito" onChange={(event) => {
             const file = event.target.files?.[0]
-            if (file !== undefined) onImport?.(file)
+            setPendingBackup(file)
           }} />
         </label>
+        {pendingBackup !== undefined && (
+          <section aria-label="復元の確認">
+            <p>現在の端末内データを選択したバックアップで置き換えます。</p>
+            <button type="button" onClick={() => {
+              onImport?.(pendingBackup)
+              setPendingBackup(undefined)
+            }}>このバックアップで復元</button>
+            <button type="button" onClick={() => setPendingBackup(undefined)}>キャンセル</button>
+          </section>
+        )}
         {error !== undefined && error.length > 0 && <p role="alert">{error}</p>}
       </section>
       <section className="backup-card" aria-label="カテゴリ管理">
