@@ -5,6 +5,10 @@ function formatFileSize(bytes: number) {
   return bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} KB`
 }
 
+function formatModifiedTime(timestamp: number) {
+  return new Date(timestamp).toISOString().slice(0, 16).replace('T', ' ') + ' UTC'
+}
+
 type Props = {
   onBack: () => void
   onLock: () => void
@@ -55,6 +59,7 @@ export function VaultSettingsScreen({ onBack, onLock, onBackup, onCategories, on
             <p>現在の端末内データを選択したバックアップで置き換えます。</p>
             <p>選択中: {pendingBackup.name}</p>
             <p>サイズ: {formatFileSize(pendingBackup.size)}</p>
+            <p>更新日時: {formatModifiedTime(pendingBackup.lastModified)}</p>
             <button type="button" onClick={() => {
               onImport?.(pendingBackup)
               setPendingBackup(undefined)

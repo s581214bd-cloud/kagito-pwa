@@ -57,6 +57,15 @@ it('shows small selected backups in bytes before restoring', () => {
   expect(screen.getByText(/512 B/)).toBeVisible()
 })
 
+it('shows the selected backup modified date before restoring', () => {
+  render(<VaultSettingsScreen onBack={vi.fn()} onLock={vi.fn()} onBackup={vi.fn()} />)
+
+  const backup = new File(['encrypted'], 'kagito-backup.kagito.json', { lastModified: Date.UTC(2026, 0, 2, 3, 4) })
+  fireEvent.change(screen.getByLabelText('暗号化バックアップを復元'), { target: { files: [backup] } })
+
+  expect(screen.getByText(/2026-01-02 03:04 UTC/)).toBeVisible()
+})
+
 it('cancels a selected backup without restoring it', async () => {
   const user = userEvent.setup()
   const onImport = vi.fn()
