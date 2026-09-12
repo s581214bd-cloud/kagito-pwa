@@ -27,6 +27,13 @@ it('shows five rows before scrolling and the selected category count', () => {
   expect(screen.getByTestId('visible-row-limit')).toHaveTextContent('5')
 })
 
+it('shows a first-registration prompt when the vault is empty', () => {
+  render(<VaultListScreen registrations={[]} categories={categories} onOpenRegistration={vi.fn()} onAddRegistration={vi.fn()} />)
+
+  expect(screen.getByText('まだ登録情報がありません')).toBeVisible()
+  expect(screen.getByRole('button', { name: '登録を追加' })).toBeVisible()
+})
+
 it('places favorite registrations first', () => {
   const favorites = [registration('r0', '楽天市場'), { ...registration('r1', 'Amazon'), favorite: true }]
   render(<VaultListScreen registrations={favorites} categories={categories} onOpenRegistration={vi.fn()} />)

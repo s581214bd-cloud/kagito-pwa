@@ -27,6 +27,7 @@ nav button { flex: 0 0 auto; color: #cad9ed; background: #173453; }
 nav button[aria-pressed="true"] { color: #081324; background: #e3b85d; }
 .favorites-filter { justify-self: start; color: #cad9ed; background: #173453; }
 .favorites-filter[aria-pressed="true"] { color: #081324; background: #e3b85d; box-shadow: 0 8px 20px rgba(227, 184, 93, .22); }
+.empty-vault-message { padding: 18px; border: 1px dashed rgba(227, 184, 93, .46); border-radius: 14px; text-align: center; background: rgba(23, 52, 83, .34); }
 ul { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
 li { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #294765; border-radius: 14px; background: #0d2038; }
 li > button:not([draggable]) { flex: 1; text-align: left; color: #f4f7fb; background: transparent; padding: 2px; }

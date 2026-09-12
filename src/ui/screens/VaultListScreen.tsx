@@ -76,6 +76,7 @@ export function VaultListScreen({ registrations, categories, onOpenRegistration,
       {query.trim().length > 0 && <p>検索結果 {visible.length}件</p>}
       {query.trim().length > 0 && visible.length === 0 && <p>一致する登録情報はありません</p>}
       {favoritesOnly && query.trim().length === 0 && visible.length === 0 && <p>お気に入りの登録情報はありません</p>}
+      {registrations.length === 0 && <p className="empty-vault-message">まだ登録情報がありません</p>}
       <output data-testid="visible-row-limit">5</output>
       <ul aria-label="登録情報一覧" style={{ maxHeight: '25rem', overflowY: 'auto' }}>
         {visible.map((registration, index) => (
