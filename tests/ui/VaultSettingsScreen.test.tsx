@@ -39,6 +39,24 @@ it('shows the selected backup name before restoring', () => {
   expect(screen.getByText(/before-phone-replacement\.kagito\.json/)).toBeVisible()
 })
 
+it('shows the selected backup size before restoring', () => {
+  render(<VaultSettingsScreen onBack={vi.fn()} onLock={vi.fn()} onBackup={vi.fn()} />)
+
+  const backup = new File(['x'.repeat(2048)], 'kagito-backup.kagito.json', { type: 'application/json' })
+  fireEvent.change(screen.getByLabelText('暗号化バックアップを復元'), { target: { files: [backup] } })
+
+  expect(screen.getByText(/2\.0 KB/)).toBeVisible()
+})
+
+it('shows small selected backups in bytes before restoring', () => {
+  render(<VaultSettingsScreen onBack={vi.fn()} onLock={vi.fn()} onBackup={vi.fn()} />)
+
+  const backup = new File(['x'.repeat(512)], 'small-backup.kagito.json', { type: 'application/json' })
+  fireEvent.change(screen.getByLabelText('暗号化バックアップを復元'), { target: { files: [backup] } })
+
+  expect(screen.getByText(/512 B/)).toBeVisible()
+})
+
 it('cancels a selected backup without restoring it', async () => {
   const user = userEvent.setup()
   const onImport = vi.fn()

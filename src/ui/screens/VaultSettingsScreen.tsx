@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { helpTopics } from '../../application/help-topics'
 
+function formatFileSize(bytes: number) {
+  return bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} KB`
+}
+
 type Props = {
   onBack: () => void
   onLock: () => void
@@ -50,6 +54,7 @@ export function VaultSettingsScreen({ onBack, onLock, onBackup, onCategories, on
           <section aria-label="復元の確認">
             <p>現在の端末内データを選択したバックアップで置き換えます。</p>
             <p>選択中: {pendingBackup.name}</p>
+            <p>サイズ: {formatFileSize(pendingBackup.size)}</p>
             <button type="button" onClick={() => {
               onImport?.(pendingBackup)
               setPendingBackup(undefined)
