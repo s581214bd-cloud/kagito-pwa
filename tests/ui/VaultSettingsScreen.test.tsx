@@ -3,6 +3,14 @@ import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 import { VaultSettingsScreen } from '../../src/ui/screens/VaultSettingsScreen'
 
+it('shows a privacy-safe vault summary', () => {
+  render(<VaultSettingsScreen onBack={vi.fn()} onLock={vi.fn()} onBackup={vi.fn()} registrationCount={12} favoriteCount={3} categoryCount={4} />)
+
+  expect(screen.getByText('登録 12件')).toBeVisible()
+  expect(screen.getByText('お気に入り 3件')).toBeVisible()
+  expect(screen.getByText('カテゴリ 4件')).toBeVisible()
+})
+
 it('shows help by topic and exposes backup and lock controls', async () => {
   const user = userEvent.setup()
   const onLock = vi.fn()

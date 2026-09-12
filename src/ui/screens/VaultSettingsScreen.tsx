@@ -20,9 +20,12 @@ type Props = {
   error?: string
   autoLockDuration?: AutoLockDuration
   onAutoLockDurationChange?: (duration: AutoLockDuration) => void
+  registrationCount?: number
+  favoriteCount?: number
+  categoryCount?: number
 }
 
-export function VaultSettingsScreen({ onBack, onLock, onBackup, onCategories, onSync, onImport, error, autoLockDuration = 300_000, onAutoLockDurationChange }: Props) {
+export function VaultSettingsScreen({ onBack, onLock, onBackup, onCategories, onSync, onImport, error, autoLockDuration = 300_000, onAutoLockDurationChange, registrationCount = 0, favoriteCount = 0, categoryCount = 0 }: Props) {
   const [pendingBackup, setPendingBackup] = useState<File>()
   const [replacementAcknowledged, setReplacementAcknowledged] = useState(false)
 
@@ -36,6 +39,9 @@ export function VaultSettingsScreen({ onBack, onLock, onBackup, onCategories, on
         <p className="settings-eyebrow">KAGITO / VAULT GUIDE</p>
         <h1>設定とヘルプ</h1>
         <p>保管庫を安全に使うための操作をまとめています。</p>
+      </section>
+      <section className="vault-summary" aria-label="保管庫の概要">
+        <span>登録 {registrationCount}件</span><span>お気に入り {favoriteCount}件</span><span>カテゴリ {categoryCount}件</span>
       </section>
       <div className="help-card-grid">
         {helpTopics.map((topic, index) => (

@@ -216,6 +216,9 @@ export default function App() {
           void VaultService.importEncrypted(file, repository.current).then(lock).catch(() => setError('バックアップ形式が正しくありません'))
         }}
         error={error}
+        registrationCount={registrations.length}
+        favoriteCount={registrations.filter((registration) => registration.favorite).length}
+        categoryCount={categories.length}
         autoLockDuration={autoLockDuration}
         onAutoLockDurationChange={(duration) => {
           setAutoLockDuration(duration)
