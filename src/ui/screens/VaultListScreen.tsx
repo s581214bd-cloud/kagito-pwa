@@ -107,13 +107,10 @@ export function VaultListScreen({ registrations, categories, onOpenRegistration,
             >
               {registration.favorite ? '★ ' : ''}{registration.title}
             </button>
-            <div className="list-copy-action">
-              <CopyButton label={`${registration.title}のIDをコピー`} value={registration.accountId} />
-            </div>
-            {safeExternalUrl(registration.url).length > 0 && (
-              <a className="list-open-url" href={safeExternalUrl(registration.url)} target="_blank" rel="noreferrer" aria-label={`${registration.title}を開く`}>↗</a>
-            )}
-            <button
+            <div className="vault-card-actions">
+              <div className="list-copy-action"><CopyButton label={`${registration.title}のIDをコピー`} value={registration.accountId} /></div>
+              {safeExternalUrl(registration.url).length > 0 && <a className="list-open-url" href={safeExternalUrl(registration.url)} target="_blank" rel="noreferrer" aria-label={`${registration.title}を開く`}>↗</a>}
+              <button
               type="button"
               className="favorite-toggle"
               aria-pressed={registration.favorite}
@@ -121,7 +118,8 @@ export function VaultListScreen({ registrations, categories, onOpenRegistration,
               onClick={() => onToggleFavorite?.(registration.id, !registration.favorite)}
             >
               {registration.favorite ? '★' : '☆'}
-            </button>
+              </button>
+            </div>
             <span className="registration-category" title={categoryNames.get(registration.categoryId) ?? '未分類'}>
               {categoryNames.get(registration.categoryId) ?? '未分類'}
             </span>

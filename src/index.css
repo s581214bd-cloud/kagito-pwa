@@ -36,6 +36,7 @@ li span { color: #9db5d2; font-size: 13px; }
 .registration-title, .registration-category { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 li > button.favorite-toggle { flex: 0 0 auto; padding: 4px 6px; color: #9db5d2; background: transparent; font-size: 20px; line-height: 1; }
 .favorite-toggle[aria-pressed="true"] { color: #e3b85d; }
+.vault-card-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 5px; padding: 3px; border: 1px solid rgba(86, 124, 160, .34); border-radius: 11px; background: rgba(8, 22, 40, .62); }
 .list-copy-action { flex: 0 0 auto; }
 .list-copy-action button { padding: 5px 8px; color: #cad9ed; background: #173453; font-size: 12px; }
 .list-copy-action p { position: absolute; z-index: 1; margin-top: 6px; padding: 4px 7px; border-radius: 6px; background: #173453; font-size: 12px; white-space: nowrap; }
