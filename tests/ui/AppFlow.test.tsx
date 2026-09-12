@@ -19,6 +19,20 @@ it('asks for a master password before creating a vault', async () => {
   expect(screen.getByRole('button', { name: '作成する' })).toBeVisible()
 })
 
+it('can reveal both master password fields while creating a vault', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.click(await screen.findByRole('button', { name: '保管庫を作成' }))
+  expect(screen.getByLabelText('マスターパスワード')).toHaveAttribute('type', 'password')
+  expect(screen.getByLabelText('マスターパスワード（確認）')).toHaveAttribute('type', 'password')
+
+  await user.click(screen.getByRole('button', { name: '表示する' }))
+
+  expect(screen.getByLabelText('マスターパスワード')).toHaveAttribute('type', 'text')
+  expect(screen.getByLabelText('マスターパスワード（確認）')).toHaveAttribute('type', 'text')
+})
+
 it('requires a matching confirmation before creating a vault', async () => {
   const user = userEvent.setup()
   render(<App />)

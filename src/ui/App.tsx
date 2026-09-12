@@ -23,6 +23,7 @@ export default function App() {
   const [selectedRegistration, setSelectedRegistration] = useState<Registration | undefined>()
   const [masterPassword, setMasterPassword] = useState('')
   const [masterPasswordConfirmation, setMasterPasswordConfirmation] = useState('')
+  const [showMasterPassword, setShowMasterPassword] = useState(false)
   const [showPasswordForm, setShowPasswordForm] = useState(false)
   const [hasVault, setHasVault] = useState(false)
   const [vaultReady, setVaultReady] = useState(false)
@@ -42,6 +43,7 @@ export default function App() {
     setSelectedRegistration(undefined)
     setMasterPassword('')
     setMasterPasswordConfirmation('')
+    setShowMasterPassword(false)
     setError('')
     setShowPasswordForm(false)
     setScreen('locked')
@@ -88,6 +90,7 @@ export default function App() {
     setError('')
     setMasterPassword('')
     setMasterPasswordConfirmation('')
+    setShowMasterPassword(false)
     setShowPasswordForm(true)
   }
 
@@ -147,8 +150,9 @@ export default function App() {
           <p>保管庫を確認中</p>
         ) : showPasswordForm ? (
           <form onSubmit={(event) => { event.preventDefault(); void submitPassword() }}>
-            <label>マスターパスワード<input aria-label="マスターパスワード" type="password" value={masterPassword} onChange={(event) => setMasterPassword(event.target.value)} /></label>
-            {!hasVault && <label>マスターパスワード（確認）<input aria-label="マスターパスワード（確認）" type="password" value={masterPasswordConfirmation} onChange={(event) => setMasterPasswordConfirmation(event.target.value)} /></label>}
+            <label>マスターパスワード<input aria-label="マスターパスワード" type={showMasterPassword ? 'text' : 'password'} value={masterPassword} onChange={(event) => setMasterPassword(event.target.value)} /></label>
+            {!hasVault && <label>マスターパスワード（確認）<input aria-label="マスターパスワード（確認）" type={showMasterPassword ? 'text' : 'password'} value={masterPasswordConfirmation} onChange={(event) => setMasterPasswordConfirmation(event.target.value)} /></label>}
+            <button type="button" onClick={() => setShowMasterPassword((visible) => !visible)}>{showMasterPassword ? '隠す' : '表示する'}</button>
             {error.length > 0 && <p role="alert">{error}</p>}
             <button type="submit">{hasVault ? '解除' : '作成する'}</button>
           </form>
