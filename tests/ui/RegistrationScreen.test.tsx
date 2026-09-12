@@ -19,6 +19,30 @@ it('keeps the password masked and saves the required registration fields', async
   expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ title: '楽天市場', accountId: 'user@example.com', password: 'secret', categoryId: 'other' }))
 })
 
+it('disables saving while a registration save is pending', async () => {
+  const user = userEvent.setup()
+  const onSave = vi.fn(() => new Promise<void>(() => {}))
+  render(<RegistrationScreen categories={[{ id: 'other', name: 'その他', sortOrder: 0 }]} onSave={onSave} />)
+
+  await user.type(screen.getByLabelText('サイト名'), '楽天市場')
+  await user.click(screen.getByRole('button', { name: '保存' }))
+
+  expect(screen.getByRole('button', { name: '保存中' })).toBeDisabled()
+})
+
+it('keeps entered values and explains when saving a registration fails', async () => {
+  const user = userEvent.setup()
+  const onSave = vi.fn().mockRejectedValue(new Error('保存先へ接続できません'))
+  render(<RegistrationScreen categories={[{ id: 'other', name: 'その他', sortOrder: 0 }]} onSave={onSave} />)
+
+  const title = screen.getByLabelText('サイト名')
+  await user.type(title, '楽天市場')
+  await user.click(screen.getByRole('button', { name: '保存' }))
+
+  expect(await screen.findByRole('alert')).toHaveTextContent('保存先へ接続できません')
+  expect(title).toHaveValue('楽天市場')
+})
+
 it('renders separate copy controls for the ID and password on a saved registration', () => {
   render(<RegistrationScreen categories={[{ id: 'other', name: 'その他', sortOrder: 0 }]} onSave={vi.fn()} registration={{
     id: 'r1', title: '楽天市場', accountId: 'user@example.com', password: 'secret', url: '', categoryId: 'other', memo: '',

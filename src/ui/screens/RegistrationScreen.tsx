@@ -23,17 +23,27 @@ export function RegistrationScreen({ categories, registration, onSave, onHelp, o
   const [memo, setMemo] = useState(registration?.memo ?? '')
   const [favorite, setFavorite] = useState(registration?.favorite ?? false)
   const [revealed, setRevealed] = useState(false)
+  const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [deleteRequested, setDeleteRequested] = useState(false)
   const externalUrl = registration === undefined ? '' : normalizeUrl(registration.url)
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault()
+    if (saving) return
     if (title.trim().length === 0 || categoryId.length === 0) {
       setError('サイト名とカテゴリを入力してください')
       return
     }
-    await onSave({ title: title.trim(), accountId, password, url: normalizeUrl(url), categoryId, memo, favorite })
+    setSaving(true)
+    setError('')
+    try {
+      await onSave({ title: title.trim(), accountId, password, url: normalizeUrl(url), categoryId, memo, favorite })
+    } catch (reason) {
+      setError(reason instanceof Error && reason.message.length > 0 ? reason.message : '保存に失敗しました')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -61,7 +71,7 @@ export function RegistrationScreen({ categories, registration, onSave, onHelp, o
         <label>メモ<textarea aria-label="メモ" value={memo} onChange={(event) => setMemo(event.target.value)} /></label>
         <label><input aria-label="お気に入り" type="checkbox" checked={favorite} onChange={(event) => setFavorite(event.target.checked)} />お気に入り</label>
         {error.length > 0 && <p role="alert">{error}</p>}
-        <button type="submit">保存</button>
+        <button type="submit" disabled={saving}>{saving ? '保存中' : '保存'}</button>
       </form>
       {registration !== undefined && (
         <section aria-label="コピー">
