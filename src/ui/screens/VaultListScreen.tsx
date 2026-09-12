@@ -27,6 +27,7 @@ export function VaultListScreen({ registrations, categories, onOpenRegistration,
 
   const categoryNames = useMemo(() => new Map(categories.map((category) => [category.id, category.name])), [categories])
   const categoryFiltered = categoryId === null ? registrations : registrations.filter((registration) => registration.categoryId === categoryId)
+  const favoriteCount = categoryFiltered.filter((registration) => registration.favorite).length
   const favoritesFiltered = favoritesOnly ? categoryFiltered.filter((registration) => registration.favorite) : categoryFiltered
   const visible = sortRegistrations(favoritesFiltered.filter((registration) => {
     const normalized = query.trim().toLocaleLowerCase('ja')
@@ -61,7 +62,7 @@ export function VaultListScreen({ registrations, categories, onOpenRegistration,
         {query.length > 0 && <button type="button" onClick={() => setQuery('')}>検索をクリア</button>}
       </div>
 
-      <button type="button" aria-pressed={favoritesOnly} onClick={() => setFavoritesOnly((current) => !current)}>お気に入りのみ</button>
+      <button className="favorites-filter" type="button" aria-pressed={favoritesOnly} onClick={() => setFavoritesOnly((current) => !current)}>お気に入りのみ {favoriteCount}件</button>
 
       <nav aria-label="カテゴリ">
         <button type="button" aria-pressed={categoryId === null} onClick={() => setCategoryId(null)}>すべて {categoryCount(null)}件</button>
@@ -74,6 +75,7 @@ export function VaultListScreen({ registrations, categories, onOpenRegistration,
 
       {query.trim().length > 0 && <p>検索結果 {visible.length}件</p>}
       {query.trim().length > 0 && visible.length === 0 && <p>一致する登録情報はありません</p>}
+      {favoritesOnly && query.trim().length === 0 && visible.length === 0 && <p>お気に入りの登録情報はありません</p>}
       <output data-testid="visible-row-limit">5</output>
       <ul aria-label="登録情報一覧" style={{ maxHeight: '25rem', overflowY: 'auto' }}>
         {visible.map((registration, index) => (

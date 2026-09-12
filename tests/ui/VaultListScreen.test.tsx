@@ -38,10 +38,21 @@ it('shows only favorite registrations when the favorites filter is enabled', asy
   const favorites = [registration('r0', '楽天市場'), { ...registration('r1', 'Amazon'), favorite: true }]
   render(<VaultListScreen registrations={favorites} categories={categories} onOpenRegistration={vi.fn()} />)
 
-  await user.click(screen.getByRole('button', { name: 'お気に入りのみ' }))
+  const favoritesFilter = screen.getByRole('button', { name: 'お気に入りのみ 1件' })
+  await user.click(favoritesFilter)
 
+  expect(favoritesFilter).toHaveAttribute('aria-pressed', 'true')
   expect(screen.getByRole('listitem')).toHaveTextContent('Amazon')
   expect(screen.queryByText('楽天市場')).not.toBeInTheDocument()
+})
+
+it('shows an empty state when the favorites filter has no registrations', async () => {
+  const user = userEvent.setup()
+  render(<VaultListScreen registrations={sixRegistrations} categories={categories} onOpenRegistration={vi.fn()} />)
+
+  await user.click(screen.getByRole('button', { name: 'お気に入りのみ 0件' }))
+
+  expect(screen.getByText('お気に入りの登録情報はありません')).toBeVisible()
 })
 
 it('shows a search result count and preserves manual mode after another sort is chosen', async () => {
