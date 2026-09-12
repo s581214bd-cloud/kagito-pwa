@@ -30,6 +30,15 @@ it('requires confirmation before restoring a selected backup', async () => {
   expect(onImport).toHaveBeenCalledWith(backup)
 })
 
+it('shows the selected backup name before restoring', () => {
+  render(<VaultSettingsScreen onBack={vi.fn()} onLock={vi.fn()} onBackup={vi.fn()} />)
+
+  const backup = new File(['encrypted'], 'before-phone-replacement.kagito.json', { type: 'application/json' })
+  fireEvent.change(screen.getByLabelText('暗号化バックアップを復元'), { target: { files: [backup] } })
+
+  expect(screen.getByText(/before-phone-replacement\.kagito\.json/)).toBeVisible()
+})
+
 it('cancels a selected backup without restoring it', async () => {
   const user = userEvent.setup()
   const onImport = vi.fn()

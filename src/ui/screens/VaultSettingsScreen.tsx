@@ -49,6 +49,7 @@ export function VaultSettingsScreen({ onBack, onLock, onBackup, onCategories, on
         {pendingBackup !== undefined && (
           <section aria-label="復元の確認">
             <p>現在の端末内データを選択したバックアップで置き換えます。</p>
+            <p>選択中: {pendingBackup.name}</p>
             <button type="button" onClick={() => {
               onImport?.(pendingBackup)
               setPendingBackup(undefined)
