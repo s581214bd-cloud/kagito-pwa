@@ -91,14 +91,11 @@ export function VaultListScreen({ registrations, categories, onOpenRegistration,
             }}
           >
             {sort === 'manual' && (
-              <button
-                type="button"
-                aria-label={`${registration.title}を移動`}
-                draggable
-                onDragStart={() => setDraggedId(registration.id)}
-              >
-                ⠿
-              </button>
+              <>
+                <button type="button" aria-label={`${registration.title}を上へ移動`} disabled={index === 0} onClick={() => onMoveRegistration?.(registration.id, index - 1)}>↑</button>
+                <button type="button" aria-label={`${registration.title}を移動`} draggable onDragStart={() => setDraggedId(registration.id)}>⠿</button>
+                <button type="button" aria-label={`${registration.title}を下へ移動`} disabled={index === visible.length - 1} onClick={() => onMoveRegistration?.(registration.id, index + 1)}>↓</button>
+              </>
             )}
             <button
               type="button"

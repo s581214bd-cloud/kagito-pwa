@@ -80,6 +80,15 @@ it('offers an account ID copy action on the registration card', () => {
   expect(screen.getByRole('button', { name: '楽天市場のIDをコピー' })).toBeVisible()
 })
 
+it('offers bounded move controls while manually sorting registrations', () => {
+  render(<VaultListScreen registrations={[registration('r0', '楽天市場'), registration('r1', 'Amazon')]} categories={categories} onOpenRegistration={vi.fn()} />)
+
+  expect(screen.getByRole('button', { name: '楽天市場を上へ移動' })).toBeDisabled()
+  expect(screen.getByRole('button', { name: '楽天市場を下へ移動' })).toBeEnabled()
+  expect(screen.getByRole('button', { name: 'Amazonを上へ移動' })).toBeEnabled()
+  expect(screen.getByRole('button', { name: 'Amazonを下へ移動' })).toBeDisabled()
+})
+
 it('shows only favorite registrations when the favorites filter is enabled', async () => {
   const user = userEvent.setup()
   const favorites = [registration('r0', '楽天市場'), { ...registration('r1', 'Amazon'), favorite: true }]
