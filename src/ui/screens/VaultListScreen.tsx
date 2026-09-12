@@ -98,8 +98,17 @@ export function VaultListScreen({ registrations, categories, onOpenRegistration,
                 ⠿
               </button>
             )}
-            <button type="button" onClick={() => onOpenRegistration(registration.id)}>{registration.favorite ? '★ ' : ''}{registration.title}</button>
-            <span>{categoryNames.get(registration.categoryId) ?? '未分類'}</span>
+            <button
+              type="button"
+              className="registration-title"
+              title={registration.title}
+              onClick={() => onOpenRegistration(registration.id)}
+            >
+              {registration.favorite ? '★ ' : ''}{registration.title}
+            </button>
+            <span className="registration-category" title={categoryNames.get(registration.categoryId) ?? '未分類'}>
+              {categoryNames.get(registration.categoryId) ?? '未分類'}
+            </span>
           </li>
         ))}
       </ul>

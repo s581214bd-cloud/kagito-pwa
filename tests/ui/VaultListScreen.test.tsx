@@ -19,6 +19,22 @@ const sixRegistrations = [
   registration('r3', 'メルカリ'), registration('r4', 'Yahoo!'), registration('r5', 'Apple'),
 ]
 
+it('keeps the full text available for long registration labels', () => {
+  const title = 'とても長いサービス名でもスマホの一覧カードからはみ出さずに確認できる登録名'
+  const categoryName = 'とても長いカテゴリ名でも省略表示から内容を確認できるカテゴリ'
+
+  render(
+    <VaultListScreen
+      registrations={[registration('r0', title)]}
+      categories={[{ id: 'shopping', name: categoryName, sortOrder: 0 }]}
+      onOpenRegistration={vi.fn()}
+    />,
+  )
+
+  expect(screen.getByRole('button', { name: title })).toHaveAttribute('title', title)
+  expect(screen.getByText(categoryName)).toHaveAttribute('title', categoryName)
+})
+
 it('shows five rows before scrolling and the selected category count', () => {
   render(<VaultListScreen registrations={sixRegistrations} categories={categories} onOpenRegistration={vi.fn()} />)
 
