@@ -5,6 +5,8 @@ export type AutoLockDuration = 30_000 | 60_000 | 300_000 | 'none'
 const defaultDuration: AutoLockDuration = 300_000
 const allowedDurations: readonly AutoLockDuration[] = [30_000, 60_000, 300_000, 'none']
 
+export const toAutoLockTimeout = (duration: AutoLockDuration): number | undefined => duration === 'none' ? undefined : duration
+
 export class AutoLockSettings {
   private readonly repository: VaultRepository
 

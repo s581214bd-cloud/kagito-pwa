@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { AutoLockSettings } from '../../src/application/auto-lock-settings'
+import { AutoLockSettings, toAutoLockTimeout } from '../../src/application/auto-lock-settings'
 import { createVaultRepository } from '../../src/storage/vault-repository'
 
 it('uses five minutes by default and persists a selected duration', async () => {
@@ -9,4 +9,9 @@ it('uses five minutes by default and persists a selected duration', async () => 
   await settings.save(60_000)
 
   await expect(settings.read()).resolves.toBe(60_000)
+})
+
+it('converts the no-lock setting into no timer', () => {
+  expect(toAutoLockTimeout(30_000)).toBe(30_000)
+  expect(toAutoLockTimeout('none')).toBeUndefined()
 })

@@ -3,7 +3,7 @@ import { VaultService } from '../application/vault-service'
 import { PairingClient, type PendingPairing } from '../application/pairing-client'
 import { SyncClient, type SyncConnection } from '../application/sync-client'
 import { SyncSettings } from '../application/sync-settings'
-import { AutoLockSettings, type AutoLockDuration } from '../application/auto-lock-settings'
+import { AutoLockSettings, toAutoLockTimeout, type AutoLockDuration } from '../application/auto-lock-settings'
 import type { Category, Registration } from '../domain/models'
 import { createVaultRepository } from '../storage/vault-repository'
 import { RegistrationScreen } from './screens/RegistrationScreen'
@@ -71,10 +71,10 @@ export default function App() {
 
   useLayoutEffect(() => {
     if (service === null) return
-    let timeout = autoLockDuration === 'none' ? undefined : window.setTimeout(lock, autoLockDuration)
+    let timeout = toAutoLockTimeout(autoLockDuration) === undefined ? undefined : window.setTimeout(lock, toAutoLockTimeout(autoLockDuration))
     const resetTimer = () => {
       if (timeout !== undefined) window.clearTimeout(timeout)
-      timeout = autoLockDuration === 'none' ? undefined : window.setTimeout(lock, autoLockDuration)
+      timeout = toAutoLockTimeout(autoLockDuration) === undefined ? undefined : window.setTimeout(lock, toAutoLockTimeout(autoLockDuration))
     }
     const onVisibilityChange = () => {
       if (document.visibilityState === 'hidden') lock()
