@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import type { Category, Registration } from '../../domain/models'
 import type { SortMode } from '../../application/vault-service'
+import { CopyButton } from '../components/CopyButton'
 
 type Props = {
   registrations: Registration[]
@@ -107,6 +108,9 @@ export function VaultListScreen({ registrations, categories, onOpenRegistration,
             >
               {registration.favorite ? '★ ' : ''}{registration.title}
             </button>
+            <div className="list-copy-action">
+              <CopyButton label={`${registration.title}のIDをコピー`} value={registration.accountId} />
+            </div>
             <button
               type="button"
               className="favorite-toggle"

@@ -74,6 +74,12 @@ it('requests a favorite change from the registration card', async () => {
   expect(onToggleFavorite).toHaveBeenCalledWith('r0', true)
 })
 
+it('offers an account ID copy action on the registration card', () => {
+  render(<VaultListScreen registrations={[registration('r0', '楽天市場')]} categories={categories} onOpenRegistration={vi.fn()} />)
+
+  expect(screen.getByRole('button', { name: '楽天市場のIDをコピー' })).toBeVisible()
+})
+
 it('shows only favorite registrations when the favorites filter is enabled', async () => {
   const user = userEvent.setup()
   const favorites = [registration('r0', '楽天市場'), { ...registration('r1', 'Amazon'), favorite: true }]
