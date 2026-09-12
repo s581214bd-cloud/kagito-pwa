@@ -26,8 +26,22 @@ it('requires confirmation before restoring a selected backup', async () => {
   fireEvent.change(screen.getByLabelText('暗号化バックアップを復元'), { target: { files: [backup] } })
 
   expect(onImport).not.toHaveBeenCalled()
+  await user.click(screen.getByRole('checkbox', { name: '現在の端末データが置き換わることを理解しました' }))
   await user.click(screen.getByRole('button', { name: 'このバックアップで復元' }))
   expect(onImport).toHaveBeenCalledWith(backup)
+})
+
+it('requires acknowledging data replacement before restoring', async () => {
+  const user = userEvent.setup()
+  render(<VaultSettingsScreen onBack={vi.fn()} onLock={vi.fn()} onBackup={vi.fn()} />)
+
+  const backup = new File(['encrypted'], 'kagito-backup.kagito.json')
+  fireEvent.change(screen.getByLabelText('暗号化バックアップを復元'), { target: { files: [backup] } })
+
+  const restore = screen.getByRole('button', { name: 'このバックアップで復元' })
+  expect(restore).toBeDisabled()
+  await user.click(screen.getByRole('checkbox', { name: '現在の端末データが置き換わることを理解しました' }))
+  expect(restore).toBeEnabled()
 })
 
 it('shows the selected backup name before restoring', () => {

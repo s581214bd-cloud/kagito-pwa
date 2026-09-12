@@ -21,6 +21,7 @@ type Props = {
 
 export function VaultSettingsScreen({ onBack, onLock, onBackup, onCategories, onSync, onImport, error }: Props) {
   const [pendingBackup, setPendingBackup] = useState<File>()
+  const [replacementAcknowledged, setReplacementAcknowledged] = useState(false)
 
   return (
     <main className="settings-screen" aria-label="設定とヘルプ">
@@ -52,6 +53,7 @@ export function VaultSettingsScreen({ onBack, onLock, onBackup, onCategories, on
           <input aria-label="暗号化バックアップを復元" type="file" accept="application/json,.json,.kagito" onChange={(event) => {
             const file = event.target.files?.[0]
             setPendingBackup(file)
+            setReplacementAcknowledged(false)
           }} />
         </label>
         {pendingBackup !== undefined && (
@@ -60,11 +62,19 @@ export function VaultSettingsScreen({ onBack, onLock, onBackup, onCategories, on
             <p>選択中: {pendingBackup.name}</p>
             <p>サイズ: {formatFileSize(pendingBackup.size)}</p>
             <p>更新日時: {formatModifiedTime(pendingBackup.lastModified)}</p>
+            <label>
+              <input type="checkbox" checked={replacementAcknowledged} onChange={(event) => setReplacementAcknowledged(event.target.checked)} />
+              現在の端末データが置き換わることを理解しました
+            </label>
             <button type="button" onClick={() => {
               onImport?.(pendingBackup)
               setPendingBackup(undefined)
-            }}>このバックアップで復元</button>
-            <button type="button" onClick={() => setPendingBackup(undefined)}>キャンセル</button>
+              setReplacementAcknowledged(false)
+            }} disabled={!replacementAcknowledged}>このバックアップで復元</button>
+            <button type="button" onClick={() => {
+              setPendingBackup(undefined)
+              setReplacementAcknowledged(false)
+            }}>キャンセル</button>
           </section>
         )}
         {error !== undefined && error.length > 0 && <p role="alert">{error}</p>}
