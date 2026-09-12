@@ -80,6 +80,12 @@ it('offers an account ID copy action on the registration card', () => {
   expect(screen.getByRole('button', { name: '楽天市場のIDをコピー' })).toBeVisible()
 })
 
+it('offers a safe registered URL from the registration card', () => {
+  render(<VaultListScreen registrations={[{ ...registration('r0', '楽天市場'), url: 'https://example.com' }]} categories={categories} onOpenRegistration={vi.fn()} />)
+
+  expect(screen.getByRole('link', { name: '楽天市場を開く' })).toHaveAttribute('href', 'https://example.com')
+})
+
 it('offers bounded move controls while manually sorting registrations', () => {
   render(<VaultListScreen registrations={[registration('r0', '楽天市場'), registration('r1', 'Amazon')]} categories={categories} onOpenRegistration={vi.fn()} />)
 

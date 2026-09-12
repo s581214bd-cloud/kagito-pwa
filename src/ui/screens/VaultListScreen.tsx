@@ -20,6 +20,8 @@ const sortRegistrations = (registrations: Registration[], sort: SortMode) => reg
   return left.sortOrder - right.sortOrder
 })
 
+const safeExternalUrl = (value: string) => (/^https?:\/\//i.test(value.trim()) ? value.trim() : '')
+
 export function VaultListScreen({ registrations, categories, onOpenRegistration, onToggleFavorite, onMoveRegistration, onAddRegistration }: Props) {
   const [query, setQuery] = useState('')
   const [categoryId, setCategoryId] = useState<string | null>(null)
@@ -108,6 +110,9 @@ export function VaultListScreen({ registrations, categories, onOpenRegistration,
             <div className="list-copy-action">
               <CopyButton label={`${registration.title}のIDをコピー`} value={registration.accountId} />
             </div>
+            {safeExternalUrl(registration.url).length > 0 && (
+              <a className="list-open-url" href={safeExternalUrl(registration.url)} target="_blank" rel="noreferrer" aria-label={`${registration.title}を開く`}>↗</a>
+            )}
             <button
               type="button"
               className="favorite-toggle"
