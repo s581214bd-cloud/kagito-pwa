@@ -22,11 +22,13 @@ export function VaultListScreen({ registrations, categories, onOpenRegistration,
   const [query, setQuery] = useState('')
   const [categoryId, setCategoryId] = useState<string | null>(null)
   const [sort, setSort] = useState<SortMode>('manual')
+  const [favoritesOnly, setFavoritesOnly] = useState(false)
   const [draggedId, setDraggedId] = useState<string | null>(null)
 
   const categoryNames = useMemo(() => new Map(categories.map((category) => [category.id, category.name])), [categories])
   const categoryFiltered = categoryId === null ? registrations : registrations.filter((registration) => registration.categoryId === categoryId)
-  const visible = sortRegistrations(categoryFiltered.filter((registration) => {
+  const favoritesFiltered = favoritesOnly ? categoryFiltered.filter((registration) => registration.favorite) : categoryFiltered
+  const visible = sortRegistrations(favoritesFiltered.filter((registration) => {
     const normalized = query.trim().toLocaleLowerCase('ja')
     return normalized.length === 0 || registration.title.toLocaleLowerCase('ja').includes(normalized) || (categoryNames.get(registration.categoryId) ?? '').toLocaleLowerCase('ja').includes(normalized)
   }), sort)
@@ -58,6 +60,8 @@ export function VaultListScreen({ registrations, categories, onOpenRegistration,
         />
         {query.length > 0 && <button type="button" onClick={() => setQuery('')}>検索をクリア</button>}
       </div>
+
+      <button type="button" aria-pressed={favoritesOnly} onClick={() => setFavoritesOnly((current) => !current)}>お気に入りのみ</button>
 
       <nav aria-label="カテゴリ">
         <button type="button" aria-pressed={categoryId === null} onClick={() => setCategoryId(null)}>すべて {categoryCount(null)}件</button>

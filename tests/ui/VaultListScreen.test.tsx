@@ -33,6 +33,17 @@ it('places favorite registrations first', () => {
   expect(screen.getAllByRole('listitem')[0]).toHaveTextContent('Amazon')
 })
 
+it('shows only favorite registrations when the favorites filter is enabled', async () => {
+  const user = userEvent.setup()
+  const favorites = [registration('r0', '楽天市場'), { ...registration('r1', 'Amazon'), favorite: true }]
+  render(<VaultListScreen registrations={favorites} categories={categories} onOpenRegistration={vi.fn()} />)
+
+  await user.click(screen.getByRole('button', { name: 'お気に入りのみ' }))
+
+  expect(screen.getByRole('listitem')).toHaveTextContent('Amazon')
+  expect(screen.queryByText('楽天市場')).not.toBeInTheDocument()
+})
+
 it('shows a search result count and preserves manual mode after another sort is chosen', async () => {
   const user = userEvent.setup()
   render(<VaultListScreen registrations={sixRegistrations} categories={categories} onOpenRegistration={vi.fn()} />)
