@@ -17,6 +17,16 @@ it('shows help by topic and exposes backup and lock controls', async () => {
   expect(onBackup).toHaveBeenCalledOnce()
 })
 
+it('changes the selected auto-lock duration', async () => {
+  const user = userEvent.setup()
+  const onAutoLockDurationChange = vi.fn()
+  render(<VaultSettingsScreen onBack={vi.fn()} onLock={vi.fn()} onBackup={vi.fn()} autoLockDuration={300_000} onAutoLockDurationChange={onAutoLockDurationChange} />)
+
+  await user.selectOptions(screen.getByLabelText('自動ロック時間'), '60000')
+
+  expect(onAutoLockDurationChange).toHaveBeenCalledWith(60_000)
+})
+
 it('requires confirmation before restoring a selected backup', async () => {
   const user = userEvent.setup()
   const onImport = vi.fn()

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { helpTopics } from '../../application/help-topics'
+import type { AutoLockDuration } from '../../application/auto-lock-settings'
 
 function formatFileSize(bytes: number) {
   return bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} KB`
@@ -17,9 +18,11 @@ type Props = {
   onSync?: () => void
   onImport?: (file: File) => void
   error?: string
+  autoLockDuration?: AutoLockDuration
+  onAutoLockDurationChange?: (duration: AutoLockDuration) => void
 }
 
-export function VaultSettingsScreen({ onBack, onLock, onBackup, onCategories, onSync, onImport, error }: Props) {
+export function VaultSettingsScreen({ onBack, onLock, onBackup, onCategories, onSync, onImport, error, autoLockDuration = 300_000, onAutoLockDurationChange }: Props) {
   const [pendingBackup, setPendingBackup] = useState<File>()
   const [replacementAcknowledged, setReplacementAcknowledged] = useState(false)
 
@@ -43,6 +46,18 @@ export function VaultSettingsScreen({ onBack, onLock, onBackup, onCategories, on
           </section>
         ))}
       </div>
+      <section className="backup-card" aria-label="自動ロック">
+        <p className="settings-eyebrow">SECURITY</p>
+        <h2>自動ロック</h2>
+        <label>自動ロック時間
+          <select aria-label="自動ロック時間" value={String(autoLockDuration)} onChange={(event) => {
+            const value = event.target.value === 'none' ? 'none' : Number(event.target.value) as AutoLockDuration
+            onAutoLockDurationChange?.(value)
+          }}>
+            <option value="30000">30秒</option><option value="60000">1分</option><option value="300000">5分</option><option value="none">なし</option>
+          </select>
+        </label>
+      </section>
       <section className="backup-card" aria-label="バックアップ">
         <p className="settings-eyebrow">SAFE KEEPING</p>
         <h2>暗号化バックアップ</h2>
