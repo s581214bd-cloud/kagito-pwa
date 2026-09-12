@@ -1,0 +1,12 @@
+{
+  "name": "kagito-argon2id-v1-interoperability",
+  "version": 19,
+  "passwordEncoding": "raw-test-bytes",
+  "passwordHex": "4b414749544f2d4152474f4e3249442d56312d54455354",
+  "saltHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "memoryKiB": 65536,
+  "iterations": 3,
+  "lanes": 4,
+  "outputLength": 32,
+  "expectedKeyHex": "ca7c6c9059a16b914e3e2f47cf86300b2898b7ebddb3b6a6e66c888a03c3aa45"
+}
