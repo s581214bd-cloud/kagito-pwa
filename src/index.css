@@ -82,6 +82,17 @@ section { display: grid; gap: 9px; padding: 14px; border-radius: 14px; backgroun
 .category-move:disabled { cursor: not-allowed; opacity: .38; }
 .category-delete { padding: 10px 12px; color: #ffddd5; background: rgba(105, 37, 38, .66); }
 
+.registration-screen { gap: 16px; }
+.registration-screen > h1 { margin: 0; }
+.registration-help { justify-self: start; color: #cad9ed; background: #173453; }
+.registration-screen form { gap: 14px; }
+.registration-card { gap: 13px; padding: 20px; border: 1px solid rgba(86, 124, 160, .46); background: linear-gradient(145deg, rgba(17, 44, 73, .9), rgba(8, 22, 40, .9)); }
+.registration-card h2 { margin: 0; color: #f4f7fb; font-size: 18px; }
+.registration-secret-card { border-color: rgba(227, 184, 93, .42); background: linear-gradient(135deg, rgba(48, 76, 103, .72), rgba(10, 26, 47, .86)); }
+.password-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.password-actions button { color: #cad9ed; background: #173453; }
+.registration-save { width: 100%; padding: 14px; box-shadow: 0 10px 24px rgba(227, 184, 93, .18); }
+
 @media (max-width: 480px) {
   #root { padding: 10px; }
   main { padding: 16px; border-radius: 16px; }
@@ -95,4 +106,5 @@ section { display: grid; gap: 9px; padding: 14px; border-radius: 14px; backgroun
   .category-actions { grid-template-columns: 1fr auto; }
   .category-move-actions { grid-column: 1 / -1; }
   .category-move { flex: 1; }
+  .registration-card { padding: 16px; }
 }

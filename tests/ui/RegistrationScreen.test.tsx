@@ -3,6 +3,14 @@ import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 import { RegistrationScreen } from '../../src/ui/screens/RegistrationScreen'
 
+it('groups registration fields into clear sections', () => {
+  render(<RegistrationScreen categories={[{ id: 'other', name: 'その他', sortOrder: 0 }]} onSave={vi.fn()} />)
+
+  expect(screen.getByRole('heading', { name: '基本情報' })).toBeVisible()
+  expect(screen.getByRole('heading', { name: '保管内容' })).toBeVisible()
+  expect(screen.getByRole('heading', { name: '整理' })).toBeVisible()
+})
+
 it('keeps the password masked and saves the required registration fields', async () => {
   const user = userEvent.setup()
   const onSave = vi.fn().mockResolvedValue(undefined)
