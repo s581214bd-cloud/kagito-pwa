@@ -89,6 +89,12 @@ export function RegistrationScreen({ categories, registration, onSave, onHelp, o
         <button className="registration-save" type="submit" disabled={saving}>{saving ? '保存中' : '保存'}</button>
       </form>
       {registration !== undefined && (
+        <section className="registration-metadata" aria-label="登録情報の日時">
+          <span>作成: {registration.createdAt.slice(0, 10)}</span>
+          <span>更新: {registration.updatedAt.slice(0, 10)}</span>
+        </section>
+      )}
+      {registration !== undefined && (
         <section aria-label="コピー">
           <CopyButton label="IDをコピー" value={registration.accountId} tone="secondary" />
           <CopyButton label="パスワードをコピー" value={registration.password} tone="primary" />

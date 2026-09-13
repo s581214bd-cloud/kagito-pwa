@@ -61,6 +61,16 @@ it('renders separate copy controls for the ID and password on a saved registrati
   expect(screen.getByRole('button', { name: 'パスワードをコピー' })).toBeVisible()
 })
 
+it('shows created and updated times for a saved registration', () => {
+  render(<RegistrationScreen categories={[{ id: 'other', name: 'その他', sortOrder: 0 }]} onSave={vi.fn()} registration={{
+    id: 'r1', title: '楽天市場', accountId: 'user@example.com', password: 'secret', url: '', categoryId: 'other', memo: '',
+    favorite: false, sortOrder: 0, createdAt: '2026-09-11T00:00:00.000Z', updatedAt: '2026-09-12T12:30:00.000Z', deletedAt: null, revision: 1,
+  }} />)
+
+  expect(screen.getByText('作成: 2026-09-11')).toBeVisible()
+  expect(screen.getByText('更新: 2026-09-12')).toBeVisible()
+})
+
 it('requires a second explicit action before deleting a saved registration', async () => {
   const user = userEvent.setup()
   const onDelete = vi.fn().mockResolvedValue(undefined)
