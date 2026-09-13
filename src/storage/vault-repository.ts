@@ -87,15 +87,18 @@ export interface VaultRepository {
   clearSyncConnection(): Promise<void>
   readAutoLockDuration(): Promise<unknown>
   writeAutoLockDuration(duration: number | 'none'): Promise<void>
+  readPasswordGeneratorOptions(): Promise<unknown>
+  writePasswordGeneratorOptions(options: unknown): Promise<void>
 }
 
 export const createVaultRepository = (name = 'kagito-vault-v1'): VaultRepository => {
-  const database = openDB(name, 3, {
+  const database = openDB(name, 4, {
     upgrade(db) {
       if (!db.objectStoreNames.contains('vault-header')) db.createObjectStore('vault-header')
       if (!db.objectStoreNames.contains('vault-envelopes')) db.createObjectStore('vault-envelopes', { keyPath: 'objectId' })
       if (!db.objectStoreNames.contains('sync-connection')) db.createObjectStore('sync-connection')
       if (!db.objectStoreNames.contains('auto-lock-settings')) db.createObjectStore('auto-lock-settings')
+      if (!db.objectStoreNames.contains('password-generator-settings')) db.createObjectStore('password-generator-settings')
     },
   })
 
@@ -148,5 +151,7 @@ export const createVaultRepository = (name = 'kagito-vault-v1'): VaultRepository
     async writeAutoLockDuration(duration) {
       await database.then((db) => db.put('auto-lock-settings', duration, 'duration'))
     },
+    async readPasswordGeneratorOptions() { return database.then((db) => db.get('password-generator-settings', 'options')) },
+    async writePasswordGeneratorOptions(options) { await database.then((db) => db.put('password-generator-settings', options, 'options')) },
   }
 }

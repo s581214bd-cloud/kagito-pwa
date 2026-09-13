@@ -4,6 +4,7 @@ import { PairingClient, type PendingPairing } from '../application/pairing-clien
 import { SyncClient, type SyncConnection } from '../application/sync-client'
 import { SyncSettings } from '../application/sync-settings'
 import { AutoLockSettings, toAutoLockTimeout, type AutoLockDuration } from '../application/auto-lock-settings'
+import { PasswordGeneratorSettings, type PasswordGeneratorOptions } from '../application/password-generator-settings'
 import type { Category, Registration } from '../domain/models'
 import { createVaultRepository } from '../storage/vault-repository'
 import { RegistrationScreen } from './screens/RegistrationScreen'
@@ -18,6 +19,7 @@ export default function App() {
   const repository = useRef(createVaultRepository())
   const syncSettings = useRef(new SyncSettings(repository.current))
   const autoLockSettings = useRef(new AutoLockSettings(repository.current))
+  const passwordGeneratorSettings = useRef(new PasswordGeneratorSettings(repository.current))
   const [screen, setScreen] = useState<Screen>('locked')
   const [service, setService] = useState<VaultService | null>(null)
   const [registrations, setRegistrations] = useState<Registration[]>([])
@@ -33,6 +35,7 @@ export default function App() {
   const [connection, setConnection] = useState<SyncConnection | undefined>()
   const [pendingPairing, setPendingPairing] = useState<PendingPairing | undefined>()
   const [autoLockDuration, setAutoLockDuration] = useState<AutoLockDuration>(300_000)
+  const [passwordGeneratorOptions, setPasswordGeneratorOptions] = useState<PasswordGeneratorOptions>({ length: 16, includeSymbols: true })
   const pairingLinkFromPage = (() => {
     const link = new URL(window.location.href)
     const code = link.searchParams.get('pair')
@@ -60,10 +63,11 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    void Promise.all([repository.current.readHeader(), syncSettings.current.read(), autoLockSettings.current.read()]).then(([header, savedConnection, savedAutoLockDuration]) => {
+    void Promise.all([repository.current.readHeader(), syncSettings.current.read(), autoLockSettings.current.read(), passwordGeneratorSettings.current.read()]).then(([header, savedConnection, savedAutoLockDuration, savedPasswordGeneratorOptions]) => {
       setHasVault(header !== undefined)
       setConnection(savedConnection)
       setAutoLockDuration(savedAutoLockDuration)
+      setPasswordGeneratorOptions(savedPasswordGeneratorOptions)
       setVaultReady(true)
       if (pairingLinkFromPage !== undefined) setScreen('sync')
     })
@@ -190,6 +194,11 @@ export default function App() {
           await refreshRegistrations(service)
           setSelectedRegistration(undefined)
           setScreen('vault')
+        }}
+        passwordGeneratorOptions={passwordGeneratorOptions}
+        onPasswordGeneratorOptionsChange={(options) => {
+          setPasswordGeneratorOptions(options)
+          void passwordGeneratorSettings.current.save(options)
         }}
       />
     )

@@ -27,6 +27,21 @@ it('keeps the password masked and saves the required registration fields', async
   expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ title: '楽天市場', accountId: 'user@example.com', password: 'secret', categoryId: 'other' }))
 })
 
+it('reports password generator options when they change', async () => {
+  const user = userEvent.setup()
+  const onPasswordGeneratorOptionsChange = vi.fn()
+  render(<RegistrationScreen {...{
+    categories: [{ id: 'other', name: 'その他', sortOrder: 0 }],
+    onSave: vi.fn(),
+    onPasswordGeneratorOptionsChange,
+  } as any} />)
+
+  await user.selectOptions(screen.getByLabelText('生成する長さ'), '24')
+  await user.click(screen.getByLabelText('記号を含める'))
+
+  expect(onPasswordGeneratorOptionsChange).toHaveBeenLastCalledWith({ length: 24, includeSymbols: false })
+})
+
 it('disables saving while a registration save is pending', async () => {
   const user = userEvent.setup()
   const onSave = vi.fn(() => new Promise<void>(() => {}))

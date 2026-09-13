@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Category, Registration } from '../../domain/models'
 import type { RegistrationInput } from '../../application/vault-service'
+import type { PasswordGeneratorOptions } from '../../application/password-generator-settings'
 import { generatePassword, passwordStrengthLabel } from '../../application/password-service'
 import { CopyButton } from '../components/CopyButton'
 
@@ -10,11 +11,14 @@ type Props = {
   onSave: (input: RegistrationInput) => Promise<void> | void
   onHelp?: (topic: 'copy') => void
   onDelete?: () => Promise<void> | void
+  passwordGeneratorOptions?: PasswordGeneratorOptions
+  onPasswordGeneratorOptionsChange?: (options: PasswordGeneratorOptions) => void
 }
 
 const normalizeUrl = (value: string) => (/^https?:\/\//i.test(value.trim()) ? value.trim() : '')
+const defaultPasswordGeneratorOptions: PasswordGeneratorOptions = { length: 16, includeSymbols: true }
 
-export function RegistrationScreen({ categories, registration, onSave, onHelp, onDelete }: Props) {
+export function RegistrationScreen({ categories, registration, onSave, onHelp, onDelete, passwordGeneratorOptions, onPasswordGeneratorOptionsChange }: Props) {
   const [title, setTitle] = useState(registration?.title ?? '')
   const [accountId, setAccountId] = useState(registration?.accountId ?? '')
   const [password, setPassword] = useState(registration?.password ?? '')
@@ -23,12 +27,20 @@ export function RegistrationScreen({ categories, registration, onSave, onHelp, o
   const [memo, setMemo] = useState(registration?.memo ?? '')
   const [favorite, setFavorite] = useState(registration?.favorite ?? false)
   const [revealed, setRevealed] = useState(false)
-  const [passwordLength, setPasswordLength] = useState(16)
-  const [includeSymbols, setIncludeSymbols] = useState(true)
+  const [generatorOptions, setGeneratorOptions] = useState(passwordGeneratorOptions ?? defaultPasswordGeneratorOptions)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [deleteRequested, setDeleteRequested] = useState(false)
   const externalUrl = registration === undefined ? '' : normalizeUrl(registration.url)
+
+  useEffect(() => {
+    if (passwordGeneratorOptions !== undefined) setGeneratorOptions(passwordGeneratorOptions)
+  }, [passwordGeneratorOptions])
+
+  const updateGeneratorOptions = (options: PasswordGeneratorOptions) => {
+    setGeneratorOptions(options)
+    onPasswordGeneratorOptionsChange?.(options)
+  }
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -68,9 +80,9 @@ export function RegistrationScreen({ categories, registration, onSave, onHelp, o
           </label>
           <div className="password-actions">
             <button type="button" onClick={() => setRevealed((value) => !value)}>{revealed ? '隠す' : '表示'}</button>
-            <label>生成する長さ<select aria-label="生成する長さ" value={passwordLength} onChange={(event) => setPasswordLength(Number(event.target.value))}><option value={16}>16文字</option><option value={24}>24文字</option></select></label>
-            <label><input aria-label="記号を含める" type="checkbox" checked={includeSymbols} onChange={(event) => setIncludeSymbols(event.target.checked)} />記号を含める</label>
-            <button type="button" onClick={() => setPassword(generatePassword(passwordLength, includeSymbols))}>パスワードを生成</button>
+            <label>生成する長さ<select aria-label="生成する長さ" value={generatorOptions.length} onChange={(event) => updateGeneratorOptions({ ...generatorOptions, length: Number(event.target.value) as PasswordGeneratorOptions['length'] })}><option value={16}>16文字</option><option value={24}>24文字</option></select></label>
+            <label><input aria-label="記号を含める" type="checkbox" checked={generatorOptions.includeSymbols} onChange={(event) => updateGeneratorOptions({ ...generatorOptions, includeSymbols: event.target.checked })} />記号を含める</label>
+            <button type="button" onClick={() => setPassword(generatePassword(generatorOptions.length, generatorOptions.includeSymbols))}>パスワードを生成</button>
           </div>
           <p aria-live="polite">強度: {passwordStrengthLabel(password)}</p>
         </section>
