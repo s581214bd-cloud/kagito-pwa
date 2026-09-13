@@ -13,10 +13,11 @@ const randomIndex = (length: number) => {
   return byte[0] % length
 }
 
-export function generatePassword(length = 20): string {
+export function generatePassword(length = 20, includeSymbols = true): string {
   const targetLength = Math.max(12, length)
-  const characters = groups.map((group) => group[randomIndex(group.length)])
-  const allCharacters = groups.join('')
+  const activeGroups = includeSymbols ? groups : groups.slice(0, 3)
+  const characters = activeGroups.map((group) => group[randomIndex(group.length)])
+  const allCharacters = activeGroups.join('')
   while (characters.length < targetLength) characters.push(allCharacters[randomIndex(allCharacters.length)])
 
   for (let index = characters.length - 1; index > 0; index -= 1) {

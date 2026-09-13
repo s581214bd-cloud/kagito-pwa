@@ -23,6 +23,8 @@ export function RegistrationScreen({ categories, registration, onSave, onHelp, o
   const [memo, setMemo] = useState(registration?.memo ?? '')
   const [favorite, setFavorite] = useState(registration?.favorite ?? false)
   const [revealed, setRevealed] = useState(false)
+  const [passwordLength, setPasswordLength] = useState(16)
+  const [includeSymbols, setIncludeSymbols] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [deleteRequested, setDeleteRequested] = useState(false)
@@ -66,7 +68,9 @@ export function RegistrationScreen({ categories, registration, onSave, onHelp, o
           </label>
           <div className="password-actions">
             <button type="button" onClick={() => setRevealed((value) => !value)}>{revealed ? '隠す' : '表示'}</button>
-            <button type="button" onClick={() => setPassword(generatePassword())}>パスワードを生成</button>
+            <label>生成する長さ<select aria-label="生成する長さ" value={passwordLength} onChange={(event) => setPasswordLength(Number(event.target.value))}><option value={16}>16文字</option><option value={24}>24文字</option></select></label>
+            <label><input aria-label="記号を含める" type="checkbox" checked={includeSymbols} onChange={(event) => setIncludeSymbols(event.target.checked)} />記号を含める</label>
+            <button type="button" onClick={() => setPassword(generatePassword(passwordLength, includeSymbols))}>パスワードを生成</button>
           </div>
           <p aria-live="polite">強度: {passwordStrengthLabel(password)}</p>
         </section>
